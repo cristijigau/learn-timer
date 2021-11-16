@@ -1,0 +1,15 @@
+export const colors = {
+  background: '#282c34',
+  foreground: '#abb2bf',
+  comment: '#636d83',
+  keyword: '#10b1fe',
+  function: '#3fc56b',
+  property: '#ce9887',
+  string: '#f9c859',
+  number: '#ff78f8',
+  constant: '#9f7efe',
+  markup_tag: '#3691ff',
+  markup_attribute: '#ff936a',
+  class: '#ff6480',
+  operator: '#7a82da',
+};
