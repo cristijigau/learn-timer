@@ -6,3 +6,7 @@ export function secToHMS(value) {
     seconds < 10 ? '0' : ''
   }${seconds}`;
 }
+
+export function formatLabel(label) {
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}

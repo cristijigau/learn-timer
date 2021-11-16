@@ -9,31 +9,40 @@ import Typography from '@mui/material/Typography';
 import TimeInput from '../TimeInput';
 import ButtonSection from '../ButtonSection';
 import TimeDisplay from '../TimeDisplay';
+import AmountInput from '../AmountInput';
+
+const audio = new Audio(
+  'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3'
+);
 
 const Timer = () => {
   const classes = useStyles();
 
-  const audio = new Audio('../../assets/audio/alarm.mp3');
-
   const [time, setTime] = useState(0);
   const [timerState, setTimerState] = useState();
   const [timerId, setTimerId] = useState();
-  const [inputValue, setInputValue] = useState(0);
+  const [studyTime, setStudyTime] = useState(0);
+  const [breakTime, setBreakTime] = useState(0);
+  const [amount, setAmount] = useState(1);
+  const [activity, setActivity] = useState('study');
 
   useEffect(() => {
     if (!timerState) return;
-    if (timerState === 'play' && inputValue) startTimer();
+    if (timerState === 'play' && studyTime) startTimer(activity);
     if (timerState === 'pause') stopTimer();
-    if (timerState === 'reset' || !inputValue) resetTimer();
+    if (timerState === 'reset' || !studyTime || !amount) resetTimer();
     return () => clearInterval(timerId);
   }, [timerState]);
 
   useEffect(() => {
-    if (!time && timerId) handleEndOfTime();
+    if (!time && timerId) {
+      handleEndOfTime();
+    }
   }, [time]);
 
-  function startTimer() {
-    if (!time) setTime(inputValue * 60);
+  function startTimer(activity) {
+    if (!amount) return;
+    if (!time) setTime(activity === 'study' ? studyTime * 60 : breakTime * 60);
     const id = setInterval(() => {
       setTime(prev => prev - 1);
     }, 1000);
@@ -42,20 +51,30 @@ const Timer = () => {
 
   function stopTimer() {
     clearInterval(timerId);
+    console.log('stopping interval: ', timerId);
   }
 
   function resetTimer() {
     stopTimer();
     setTime(0);
     setTimerId();
-    setInputValue(0);
+    setStudyTime(0);
+    setBreakTime(0);
     setTimerState();
+    setAmount(1);
+    setActivity('study');
     stopAudio();
   }
 
   function handleEndOfTime() {
-    stopTimer();
     playAudio();
+    if (amount) {
+      if (activity === 'study') setAmount(prev => prev - 1);
+      setActivity(activity === 'study' ? 'break' : 'study');
+      startTimer(activity === 'study' ? 'break' : 'study');
+      stopTimer();
+    }
+    if (!amount) resetTimer();
   }
 
   function playAudio() {
@@ -66,8 +85,6 @@ const Timer = () => {
     audio.pause();
     audio.currentTime = 0;
   }
-
-  audio.play();
 
   return (
     <Box className={classes.root}>
@@ -84,12 +101,28 @@ const Timer = () => {
               Learn Timer
             </CardHeader>
             <CardContent>
-              <TimeDisplay time={time} />
+              <TimeDisplay time={time} activity={activity} />
               <TimeInput
-                inputValue={inputValue}
-                setInputValue={setInputValue}
+                inputValue={studyTime}
+                setInputValue={setStudyTime}
                 time={time}
+                activity="study"
               />
+              <Box mt={2}>
+                <TimeInput
+                  inputValue={breakTime}
+                  setInputValue={setBreakTime}
+                  time={time}
+                  activity="break"
+                />
+              </Box>
+              <Box mt={2}>
+                <AmountInput
+                  time={time}
+                  amount={amount}
+                  setAmount={setAmount}
+                />
+              </Box>
               <ButtonSection
                 setTimerState={setTimerState}
                 timerState={timerState}
