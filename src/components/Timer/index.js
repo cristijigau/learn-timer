@@ -42,7 +42,7 @@ const Timer = () => {
 
   function startTimer(activity) {
     if (!amount) return;
-    if (!time) setTime(activity === 'study' ? studyTime : breakTime);
+    if (!time) setTime(activity === 'study' ? studyTime * 60 : breakTime * 60);
     const id = setInterval(() => {
       setTime(prev => prev - 1);
     }, 1000);
@@ -51,7 +51,6 @@ const Timer = () => {
 
   function stopTimer() {
     clearInterval(timerId);
-    console.log('stopping interval: ', timerId);
   }
 
   function resetTimer() {
@@ -67,12 +66,12 @@ const Timer = () => {
   }
 
   function handleEndOfTime() {
+    stopTimer();
     playAudio();
-    if (+amount) {
-      if (activity === 'study') setAmount(prev => prev - 1);
+    if ((activity === 'break' && amount - 1 > 0) || activity === 'study') {
+      if (activity === 'break') setAmount(prev => prev - 1);
       setActivity(activity === 'study' ? 'break' : 'study');
       startTimer(activity === 'study' ? 'break' : 'study');
-      stopTimer();
     } else resetTimer();
   }
 
