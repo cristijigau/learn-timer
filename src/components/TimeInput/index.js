@@ -7,7 +7,7 @@ import { formatLabel } from '../../helpers/helperFunctions';
 const TimeInput = ({ inputValue, setInputValue, time, activity }) => {
   const handleTimeChange = e => {
     const newTime = e.target.value;
-    if (+newTime >= 0) setInputValue(+newTime);
+    if (+newTime >= 0) setInputValue(newTime);
   };
 
   return (

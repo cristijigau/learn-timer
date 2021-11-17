@@ -5,7 +5,7 @@ import Input from '@mui/material/Input';
 const AmountInput = ({ time, amount, setAmount }) => {
   const handleTimeChange = e => {
     const newAmount = e.target.value;
-    if (+newAmount >= 0) setAmount(+newAmount);
+    if (+newAmount >= 0) setAmount(newAmount);
   };
   return (
     <FormControl fullWidth variant="standard">

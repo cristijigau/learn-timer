@@ -42,7 +42,7 @@ const Timer = () => {
 
   function startTimer(activity) {
     if (!amount) return;
-    if (!time) setTime(activity === 'study' ? studyTime * 60 : breakTime * 60);
+    if (!time) setTime(activity === 'study' ? studyTime : breakTime);
     const id = setInterval(() => {
       setTime(prev => prev - 1);
     }, 1000);
@@ -68,13 +68,12 @@ const Timer = () => {
 
   function handleEndOfTime() {
     playAudio();
-    if (amount) {
+    if (+amount) {
       if (activity === 'study') setAmount(prev => prev - 1);
       setActivity(activity === 'study' ? 'break' : 'study');
       startTimer(activity === 'study' ? 'break' : 'study');
       stopTimer();
-    }
-    if (!amount) resetTimer();
+    } else resetTimer();
   }
 
   function playAudio() {
@@ -101,7 +100,11 @@ const Timer = () => {
               Learn Timer
             </CardHeader>
             <CardContent>
-              <TimeDisplay time={time} activity={activity} />
+              <TimeDisplay
+                time={time}
+                activity={activity}
+                timerState={timerState}
+              />
               <TimeInput
                 inputValue={studyTime}
                 setInputValue={setStudyTime}
